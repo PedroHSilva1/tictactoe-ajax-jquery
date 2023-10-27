@@ -28,6 +28,13 @@ table{
     transition: 0.5s;
 }
 
+#round{
+    border: 1px solid black;
+    text-align: center;
+    margin-left: 20%;
+    margin-right: 20%;
+}
+
 /*body{
     background-color: #000010;
 }*\
