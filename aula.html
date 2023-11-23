@@ -6,70 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
     <script src="jquery.js"></script>
-    <title>Jogo da velha</title>
-
+    <title>Jogo da Velha</title>
 </head>
-<script>
-    $(document).ready(() => {
-        var move = 1;
-        var rodada = document.getElementById("round");
-        var turn = true;
-        $("#dashboard tr td").click((e) => {
-           if ($("#"+e.target.id).text() == "" && turn) {
-                if(move % 2== 1){
-                    $("#" + e.target.id).html("X")
-                }else{
-                    $("#" + e.target.id).html("O")
-                }
-                move++;
-                if (ForWinner()!= -1 && ForWinner() !="") {
-                    if (ForWinner() == "X") {
-                        alert("Jogador 1 foi o vencedor!");
-                    }else{
-                        alert("jogador 2 foi o vencedor!");
-                    }
-                    turn = false
-                }
-                rodada.textContent = "Jogada: "+move
-            }else{
-                alert("Jogada inválida!")
-           }
-    });
-    function ForWinner() {
-        var field1 = $("#c00").text();
-        var field2 = $("#c01").text();
-        var field3 = $("#c02").text();
-        var field4 = $("#c10").text();
-        var field5 = $("#c11").text();
-        var field6 = $("#c12").text();
-        var field7 = $("#c20").text();
-        var field8 = $("#c21").text();
-        var field9 = $("#c22").text();
-        
-        if ((field1 == field2) && (field2 == field3)){
-            return field3;   
-        }else if ((field4 == field5) && (field5 == field6)){
-            return field6;
-        }else if ((field7 == field8) && (field8 == field9)){
-            return field9;
-        }else if ((field1 == field4) && (field4 == field7)){
-            return field7;
-        }else if ((field2 == field5) && (field5 == field8)){
-            return field8;
-        }else if ((field3 == field6) && (field6 == field9)){
-            return field9;
-        }else if ((field1 == field5) && (field5 == field9)){
-            return field9
-        }else if ((field3 == field5) && (field5 == field7)){
-            return field7
-        }
-    }
-});
-</script>
 <body>
     <div id="divMain">
         <div id="divJogada">
             <p id="round">Jogada: 1</p>
+            <div id="divJogador">Jogador: 1 (X)</div>
         </div>
         <div id="divTabela">
             <table id="dashboard">
@@ -90,9 +33,85 @@
                 </tr>
             </table>
         </div>
+        <button id="btnMudarModo">Modo Escuro</button>
+        <button id="btnRestart">Reiniciar</button>
     </div>
+
+    <script>
+        $(document).ready(() => {
+            var move = 1;
+            var rodada = document.getElementById("round");
+            var turn = true;
+
+            $("#dashboard tr td").click((e) => {
+                if ($("#" + e.target.id).text() == "" && turn) {
+                    if (move % 2 == 1) {
+                        $("#" + e.target.id).html("X");
+                        $("#divJogador").text("Jogador: 2 (O)");
+                    } else {
+                        $("#" + e.target.id).html("O");
+                        $("#divJogador").text("Jogador: 1 (X)");
+                    }
+                    move++;
+
+                    if (checkForWinner() != "") {
+                        alert("Jogador " + (move % 2 === 0 ? 1 : 2) + " foi o vencedor!");
+                        turn = false;
+                    } else if (move > 9) {
+                        alert("Empate!");
+                        turn = false;
+                    }
+
+                    rodada.textContent = "Jogada: " + move;
+                } else {
+                    alert("Jogada inválida!");
+                }
+            });
+
+            $("#btnRestart").click(() => {
+             move = 1;
+             turn = true;
+             rodada.textContent = "Jogada: 1";
+             $("#divJogador").text("Jogador: 1 (X)");
+             $("#dashboard td").html("");
+            });
+
+            function checkForWinner() {
+    
+                var fields = [];
+                for (var i = 0; i < 3; i++) {
+                    for (var j = 0; j < 3; j++) {
+                        fields.push($("#c" + i + j).text());
+                    }
+                }
+
+                // Verificador de condições de vitória
+                for (var i = 0; i < 3; i++) {
+                    // Linhas e colunas
+                    if (fields[i] !== "" && fields[i] === fields[i + 3] && fields[i] === fields[i + 6]) {
+                        return fields[i];
+                    }
+                    if (fields[i * 3] !== "" && fields[i * 3] === fields[i * 3 + 1] && fields[i * 3] === fields[i * 3 + 2]) {
+                        return fields[i * 3];
+                    }
+                }
+
+                // Diagonais
+                if (fields[0] !== "" && fields[0] === fields[4] && fields[0] === fields[8]) {
+                    return fields[0];
+                }
+                if (fields[2] !== "" && fields[2] === fields[4] && fields[2] === fields[6]) {
+                    return fields[2];
+                }
+
+                return "";
+            }
+            $("#btnMudarModo").click(() => {
+            $("#btnMudarModo").text($("#btnMudarModo").text() === "Modo Escuro" ? "Modo Claro" : "Modo Escuro");
+            $("body, #divMain").toggleClass("dark-mode");
+
+            });
+        });
+    </script>
 </body>
 </html>
-
-
-
